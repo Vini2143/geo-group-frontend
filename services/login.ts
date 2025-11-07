@@ -10,7 +10,8 @@ export async function login(username: string, password: string) {
   });
 
   if (!response.ok) {
-    throw new Error("Erro no login");
+    const error = await response.text();
+    throw new Error(`Erro durante o login: ${error}`);
   }
 
   return await response.json();

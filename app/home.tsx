@@ -1,25 +1,9 @@
-import { getMeGroups } from "@/services/groups";
-import React, { useEffect, useState } from "react";
+import { useFetchGroups } from "@/hooks/useFetchGroups";
+import React from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 
 export default function HomeScreen() {
-  const [groups, setGroups] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        const data = await getMeGroups();
-        setGroups(data);
-      } catch (err) {
-        console.error("Erro ao carregar grupos:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchGroups();
-  }, []);
+  const { groups, loading } = useFetchGroups()
 
   if (loading) {
     return (
