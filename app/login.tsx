@@ -1,40 +1,12 @@
-import { login } from "@/services/login";
-import { useRouter } from "expo-router";
-import * as SecureStore from "expo-secure-store";
+import { useLogin } from "@/hooks/useLogin";
 import React, { useState } from "react";
-import { Alert, Button, Platform, StyleSheet, Text, TextInput, View } from "react-native";
+import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-  const router = useRouter()
-
-  async function handleLogin() {
-    if (!username || !password) {
-      Alert.alert("Erro", "Preencha usuário e senha.")
-      return;
-    }
-
-    try {
-      setLoading(true)
-      const data = await login(username, password)
-      
-      if (Platform.OS === "web") {
-        localStorage.setItem("token", data.access_token)
-      } else {
-        await SecureStore.setItemAsync("token", data.access_token)
-      }
-      
-      Alert.alert("Sucesso", "Login realizado!")
-      router.push("/home")
-    } catch (error) {
-      Alert.alert("Erro", "Usuário ou senha inválidos.")
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { handleLogin, loading } = useLogin()
 
   return (
     <View style={styles.container}>
@@ -54,7 +26,7 @@ export default function LoginScreen() {
         onChangeText={setPassword}
       />
 
-      <Button title={loading ? "Entrando..." : "Entrar"} onPress={handleLogin} disabled={loading} />
+      <Button title={loading ? "Entrando..." : "Entrar"} onPress={ () => handleLogin(username, password)} disabled={loading} />
     </View>
   );
 }
