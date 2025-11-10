@@ -1,4 +1,4 @@
-import { useLogin } from "@/hooks/useLogin";
+import { useLogin } from "@/hooks/auth";
 import React, { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
