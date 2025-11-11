@@ -1,6 +1,7 @@
 import { CreateGroupModal } from "@/components/modalCreateGroup";
 import { JoinGroupModal } from "@/components/modalJoinGroup";
 import { useGetMeGroups, useLeaveGroups } from "@/hooks/groups";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Button, FlatList, Text, View } from "react-native";
 
@@ -9,6 +10,7 @@ export default function HomeScreen() {
   const { handleLeaveGroups, loading: leaving } = useLeaveGroups()
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false)
   const [isJoinModalVisible, setIsJoinModalVisible] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     refreshMeGroups()
@@ -62,6 +64,7 @@ export default function HomeScreen() {
                 await refreshMeGroups()
               }}
             />
+            <Button title="Ver mapa" onPress={() => router.push("/map") } />
           </View>
         )}
       />
