@@ -5,9 +5,9 @@ export const tokenService = {
 
   setToken: async (token: string) => {
     if (Platform.OS === "web") {
-        localStorage.setItem("token", token)
+      localStorage.setItem("token", token)
     } else {
-        await SecureStore.setItemAsync("token", token)
+      await SecureStore.setItemAsync("token", token)
     }
   },
 
