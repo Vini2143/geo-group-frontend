@@ -2,7 +2,6 @@ import { CreateGroupModal } from "@/components/modalCreateGroup";
 import { JoinGroupModal } from "@/components/modalJoinGroup";
 import { useLogout } from "@/hooks/auth";
 import { useGetMeGroups, useLeaveGroups } from "@/hooks/groups";
-import { socketioService } from "@/services/socketioService";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Button, FlatList, Text, View } from "react-native";
@@ -61,13 +60,6 @@ export default function HomeScreen() {
         renderItem={({ item }) => (
           <View style={{ marginBottom: 15, padding: 10, borderWidth: 1, borderColor: "#ccc", borderRadius: 8, justifyContent: "space-between", flexDirection: 'row' }}>
             <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
-            <Button 
-              title="Teste WS" 
-              onPress={ async () => {
-                await socketioService.connect(item.id) 
-                socketioService.onUserUpdate((data) => console.log("localização atualizada", data))
-              }}
-            />
             <Button
               title={leaving ? "Saindo..." : "Sair"}
               color="red"
@@ -77,7 +69,7 @@ export default function HomeScreen() {
                 await refreshMeGroups()
               }}
             />
-            <Button title="Ver mapa" onPress={() => router.push("/map") } />
+            <Button title="Ver mapa" onPress={() => router.push(`/map?id=${item.id}`) } />
           </View>
         )}
       />

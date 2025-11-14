@@ -2,50 +2,57 @@ import { WS_API_URL } from "@/constants/settings";
 import { io, Socket } from "socket.io-client";
 import { tokenService } from "./tokenService";
 
-let socket: Socket | null = null;
+class SocketIOService {
+  private socket: Socket | null = null
 
-export const socketioService = {
-  connect: async (group_id: number) => {
+  async connect(group_id: number) {
     const token = await tokenService.getToken()
 
-    socket = io(WS_API_URL, {
+    this.socket = io(WS_API_URL, {
       path: "/ws/socket.io",
-      query: {token: token, group_id: group_id},
+      query: { token, group_id },
       transports: ["websocket"],
       reconnection: false,
-    });
+    })
 
-    socket.on("connect", () => {
-      console.log("Conectado ao WebSocket");
-    });
+    this.socket.on("connect", () => console.log("Conectado ao WebSocket"))
+    this.socket.on("disconnect", (reason) => console.log("Desconectado:", reason))
+    this.socket.on("connect_error", (err) => console.error("Erro na conexão:", err))
 
-    socket.on("disconnect", (reason) => {
-      console.log("Desconectado:", reason);
-    });
+    return this.socket
+  }
 
-    socket.on("connect_error", (err) => {
-      console.error("Erro na conexão:", err);
-    });
+  updateLocation(data: any) {
+    if (!this.socket) return
+    this.socket.emit("client_update_position", data)
+  }
 
-    return socket;
-  },
+  disconnect() {
+    if (!this.socket) return
+    this.socket.disconnect()
+    this.socket = null
+  }
 
+  onReceiveServerData(callback: (data: any) => void) {
+    if (!this.socket) return
+    this.socket.on("server_data", callback)
+  }
 
-  onUserUpdate: (callback: (data: any) => void) => {
-    if (!socket) return;
-    socket.on("update_user", callback);
-  },
+  onUserUpdate(callback: (data: any) => void) {
+    if (!this.socket) return
+    this.socket.on("server_update_position", callback)
+  }
 
-  onWaypointUpdate: (callback: (data: any) => void) => {
-    if (!socket) return;
-    socket.on("update_waypoint", callback);
-  },
+  onUserDisconnect(callback: (data: any) => void) {
+    if (!this.socket) return
+    this.socket.on("client_disconnect", callback)
+  }
 
-  
-  disconnect: () => {
-    if (socket) {
-      socket.disconnect();
-      socket = null;
-    }
-  },
-};
+  onWaypointUpdate(callback: (data: any) => void) {
+    if (!this.socket) return
+    this.socket.on("update_waypoint", callback)
+  }
+
+}
+
+export const socketioService = new SocketIOService()

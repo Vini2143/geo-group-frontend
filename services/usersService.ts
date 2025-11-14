@@ -5,7 +5,7 @@ export const usersService = {
   getMe: async () => {
     const token = await tokenService.getToken()
 
-    const response = await fetch(`${HTTP_API_URL}/users/`, {
+    const response = await fetch(`${HTTP_API_URL}/users/me/`, {
       method: "GET",
       headers: {
       "Content-Type": "application/json",
@@ -38,22 +38,4 @@ export const usersService = {
       throw new Error(`Erro: ${error}`)
     }
   },
-
-  updateMeLocation: async (lat: number, long: number) => {
-    const token = await tokenService.getToken()
-
-    const response = await fetch(`${HTTP_API_URL}/users/me/location/`, {
-      method: "PATCH",
-      headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ lat, long }),
-    })
-
-    if (!response.ok) {
-      const error = await response.text()
-      throw new Error(`Erro: ${error}`)
-    }
-  }
 }
