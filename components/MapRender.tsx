@@ -1,5 +1,5 @@
-import { useGetMe } from "@/hooks/users";
 import { socketioService } from "@/services/socketioService";
+import { usersService } from "@/services/usersService";
 import * as Location from "expo-location";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -14,17 +14,23 @@ type UserLocation = {
 }
 
 export default function MapRender() {
-  const { handleGetMe, user } = useGetMe()
   const [userLocation, setUserLocation] = useState<Location.LocationObjectCoords | null>(null)
   const [otherUsers, setOtherUsers] = useState<UserLocation[]>([])
   const [loading, setLoading] = useState(true)
 
   const { id } = useLocalSearchParams()
+  
+  
 
   useEffect(() => {
     let subscriber: Location.LocationSubscription | null = null;
 
     (async () => {
+      const user = await usersService.getMe()
+      
+      console.log(user)
+      await socketioService.connect(Number(id))
+
       try {
         const { status } = await Location.requestForegroundPermissionsAsync()
         if (status !== "granted") {
@@ -38,10 +44,7 @@ export default function MapRender() {
         });
 
         setUserLocation(location.coords)
-        await handleGetMe()
-        await socketioService.connect(Number(id))
-
-        console.log(user)
+        
 
         subscriber = await Location.watchPositionAsync(
           { accuracy: Location.Accuracy.High, distanceInterval: 3 },
@@ -93,15 +96,14 @@ export default function MapRender() {
       } finally {
         setLoading(false)
       }
-    })();
+    })()
 
     return () => {
       subscriber?.remove()
       socketioService.disconnect()
     
     }
-
-  }, []);
+  }, [])
 
   if (loading || !userLocation) {
     return (
@@ -124,7 +126,7 @@ export default function MapRender() {
         showsUserLocation
       >
       {otherUsers.map((u) => (
-        <Marker key={u.id} coordinate={{ latitude: u.lat, longitude: u.long }} anchor={{ x: 0.2, y: 0.7 }}>
+        <Marker key={u.id} coordinate={{ latitude: u.lat!, longitude: u.long! }} anchor={{ x: 0.2, y: 0.7 }}>
           <View style={styles.markerLabel}>
             <Text style={styles.markerText}>{u.username}</Text>
           </View>

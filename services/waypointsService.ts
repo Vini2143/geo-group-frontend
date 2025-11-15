@@ -28,8 +28,8 @@ export const waypointsService = {
     const response = await fetch(`${HTTP_API_URL}/groups/${group_id}/waypoints/`, {
       method: "POST",
       headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({ name, lat, long }),
     })
@@ -46,8 +46,8 @@ export const waypointsService = {
     const response = await fetch(`${HTTP_API_URL}/groups/waypoints/${waypoint_id}`, {
       method: "DELETE",
       headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
       },
     })
 
