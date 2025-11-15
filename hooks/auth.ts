@@ -25,6 +25,35 @@ export function useCheckAuth() {
 }
 
 
+export function useSignup() {
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
+  async function handleSignup(username: string, password: string) {
+    if (!username || !password) {
+      Alert.alert("Erro", "Preencha usuário e senha.")
+      return
+    }
+
+    try {
+      setLoading(true);
+      await authService.register(username, password)
+
+      Alert.alert("Sucesso", "Usuário cadastrado!")
+      setLoading(false)
+      router.push("/")
+    } catch (err) {
+      console.error("Erro ao cadastrar usuário:", err)
+      Alert.alert("Erro", "Houve um erro no cadastro do usuário.")
+    }
+
+    setLoading(false)
+  }
+
+  return { handleSignup, loading }
+}
+
+
 export function useLogin() {
   const [loading, setLoading] = useState(false)
   const { handleGetMe } = useGetMe()

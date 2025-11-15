@@ -1,18 +1,16 @@
-import { useLogin } from "@/hooks/auth";
-import { useRouter } from "expo-router";
+import { useSignup } from "@/hooks/auth";
 import React, { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
 
-export default function LoginScreen() {
+export default function SignupScreen() {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const { handleLogin, loading } = useLogin()
-  const router = useRouter()
+  const { handleSignup, loading } = useSignup()
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>Registrar</Text>
 
       <TextInput
         placeholder="Usuário"
@@ -28,17 +26,7 @@ export default function LoginScreen() {
         onChangeText={setPassword}
       />
 
-      <Button title={loading ? "Entrando..." : "Entrar"} onPress={ () => handleLogin(username, password)} disabled={loading} />
-      
-      <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 10 }}>
-        <Text style={{ color: "#000" }}>Não tem um usuário? </Text>
-        <Text
-          style={{ color: "blue" }}
-          onPress={() => router.push("/signup")}
-        >
-          Registre-se
-        </Text>
-      </View>
+      <Button title={loading ? "Cadastrando..." : "Cadastrar"} onPress={ () => handleSignup(username, password)} disabled={loading} />
     </View>
   );
 }
