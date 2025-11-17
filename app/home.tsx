@@ -4,11 +4,11 @@ import { useLogout } from "@/hooks/auth";
 import { useGetMeGroups, useLeaveGroups } from "@/hooks/groups";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Button, FlatList, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Button, FlatList, Text, View } from "react-native";
 
 export default function HomeScreen() {
   const { refreshMeGroups, groups, loading } = useGetMeGroups()
-  const { handleLeaveGroups, loading: leaving } = useLeaveGroups()
+  const { handleLeaveGroups } = useLeaveGroups()
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false)
   const [isJoinModalVisible, setIsJoinModalVisible] = useState(false)
   const { handleLogout } = useLogout()
@@ -29,7 +29,6 @@ export default function HomeScreen() {
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
-      <Text style={{ fontSize: 20, fontWeight: "bold", marginRight: "auto" }}>Meus Grupos</Text>
 
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
         <Button title="Logout" color="red" onPress={ handleLogout } />
@@ -58,18 +57,56 @@ export default function HomeScreen() {
         data={groups}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={{ marginBottom: 15, padding: 10, borderWidth: 1, borderColor: "#ccc", borderRadius: 8, justifyContent: "space-between", flexDirection: 'row' }}>
-            <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
-            <Button
-              title={leaving ? "Saindo..." : "Sair"}
-              color="red"
-              disabled={leaving}
-              onPress={async () => {
-                await handleLeaveGroups(item.id)
-                await refreshMeGroups()
+          <View
+            style={{
+              marginBottom: 15,
+              padding: 10,
+              borderWidth: 1,
+              borderColor: "#ccc",
+              borderRadius: 8,
+              flexDirection: "column",
+            }}
+          >
+
+            <View style={{ flexDirection: "column", justifyContent: "space-between" }}>
+              <Text style={{ fontWeight: "bold"}}>{`Nome: ${item.name}`}</Text>
+              <Text style={{ fontWeight: "bold" }}>{`Código: ${item.code}`}</Text>
+            </View>
+
+            <View
+              style={{
+                marginTop: 10,
+                flexDirection: "row",
+                justifyContent: "space-between",
               }}
-            />
-            <Button title="Ver mapa" onPress={() => router.push(`/map?id=${item.id}`) } />
+            >
+              <Button
+                title="Sair"
+                color="red"
+                onPress={() => {
+                  Alert.alert(
+                    "Confirmar saída",
+                    "Você realmente deseja sair deste grupo?",
+                    [
+                      { text: "Cancelar", style: "cancel" },
+                      {
+                        text: "Sim, sair",
+                        style: "destructive",
+                        onPress: async () => {
+                          await handleLeaveGroups(item.id)
+                          await refreshMeGroups()
+                        },
+                      },
+                    ]
+                  );
+                }}
+              />
+
+              <Button
+                title="Ver mapa"
+                onPress={() => router.push(`/map?id=${item.id}`)}
+              />
+            </View>
           </View>
         )}
       />

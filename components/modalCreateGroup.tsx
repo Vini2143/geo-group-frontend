@@ -36,7 +36,7 @@ export function CreateGroupModal({ visible, onClose }: ModalProps) {
         </View>
       </TouchableOpacity>
     </Modal>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -70,4 +70,4 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 16,
   },
-});
+})
