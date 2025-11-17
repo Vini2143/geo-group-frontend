@@ -27,6 +27,11 @@ class SocketIOService {
     this.socket.emit("client_update_position", data)
   }
 
+  stopSharing(data: any = null) {
+    if (!this.socket) return
+    this.socket.emit("client_stop_sharing", data)
+  }
+
   disconnect() {
     if (!this.socket) return
     this.socket.disconnect()
