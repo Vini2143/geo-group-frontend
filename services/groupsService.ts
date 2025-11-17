@@ -22,6 +22,25 @@ export const groupsService = {
     return await response.json()
   },
 
+  get: async (group_id: number) => {
+    const token = await tokenService.getToken()
+
+    const response = await fetch(`${HTTP_API_URL}/groups/${group_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.text()
+      throw new Error(`Erro: ${error}`)
+    }
+
+    return await response.json()
+  },
+
   create: async (name: string) => {
     const token = await tokenService.getToken()
 
